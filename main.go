@@ -38,7 +38,10 @@ func main() {
 		Commands:         []*dgc.Command{},
 		Middlewares:      []dgc.Middleware{},
 		PingHandler: func(ctx *dgc.Ctx) {
-			ctx.RespondText("Pong!")
+			err = ctx.RespondText("Pong!")
+			if err != nil {
+				log.Println(err)
+			}
 		},
 	})
 	router.RegisterDefaultHelpCommand(session, nil)
@@ -58,7 +61,8 @@ func main() {
 		IgnoreCase:  true,
 		SubCommands: []*dgc.Command{},
 		RateLimiter: dgc.NewRateLimiter(5*time.Second, 1*time.Second, func(ctx *dgc.Ctx) {
-			ctx.RespondText("You are being rate limited!")
+			err = ctx.RespondText("You are being rate limited!")
+			log.Println(err)
 		}),
 		Handler: syncMembers,
 	})
@@ -78,7 +82,10 @@ func main() {
 		IgnoreCase:  true,
 		SubCommands: []*dgc.Command{},
 		RateLimiter: dgc.NewRateLimiter(5*time.Second, 1*time.Second, func(ctx *dgc.Ctx) {
-			ctx.RespondText("You are being rate limited!")
+			err = ctx.RespondText("You are being rate limited!")
+			if err != nil {
+				log.Println(err)
+			}
 		}),
 		Handler: requestRank,
 	})
@@ -114,7 +121,6 @@ func requestRank(ctx *dgc.Ctx) {
 }
 
 func syncMembers(ctx *dgc.Ctx) {
-	// Respond with the just set custom object
 	wSyncer := syncer.NewWoWSyncer()
 	ms, err := ctx.Session.GuildMembers(ctx.Event.GuildID, "", 1000)
 	var users []syncer.Member
